@@ -1,0 +1,25 @@
+{
+  "name": "cantina-models",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Extensible models for cantina applications.",
+  "main": "cantina-models.js",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cpsubrian/cantina-models.git"
+  },
+  "homepage": "https://github.com/cpsubrian/cantina-models",
+  "keywords": [
+    "cantina",
+    "models"
+  ],
+  "author": "Brian Link <cpsubrian@gmail.com>",
+  "license": "MIT"
+}
