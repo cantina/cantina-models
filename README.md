@@ -15,17 +15,17 @@ Events
 ------
 
 - **model:create (model)** - A model was created.
-- **model:create:[name] (model)** - A model of type `[name]` was created.
+- **model:create:<name> (model)** - A model of type `<name>` was created.
 
 Hooks
 -----
 
 - **model:save (model, cb)** - A model is about to be saved.
-- **model:save:[name] (model, cb)** - A model of type `[name]` is about to be saved.
+- **model:save:<name> (model, cb)** - A model of type `<name>` is about to be saved.
 - **model:load (model, cb)** - A model was loaded.
-- **model:load:[name] (model, cb)** - A model of type `[name]` was loaded.
+- **model:load:<name> (model, cb)** - A model of type `<name>` was loaded.
 - **model:destroy (model, cb)** - A model was destroyed.
-- **model:destroy:[name] (model, cb)** - A model of type `[name]` was destroyed.
+- **model:destroy:<name> (model, cb)** - A model of type `<name>` was destroyed.
 
 Usage
 -----
