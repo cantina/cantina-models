@@ -30,22 +30,22 @@ app.createCollection = function (name, options) {
 
   // Save passed CRUD hooks.
   if (options.create) {
-    app.on('models:create:' + name, options.create);
+    app.on('model:create:' + name, options.create);
   }
   if (options.save) {
-    app.hook('models:save:' + name).add(options.save);
+    app.hook('model:save:' + name).add(options.save);
   }
   if (options.load) {
-    app.hook('models:load:' + name).add(options.load);
+    app.hook('model:load:' + name).add(options.load);
   }
   if (options.destroy) {
-    app.hook('models:destroy:' + name).add(options.destroy);
+    app.hook('model:destroy:' + name).add(options.destroy);
   }
 
   // Overridew with app-level CRUD hooks.
   options.create = function (model) {
-    app.emit('models:create', model);
-    app.emit('models:create:' + name, model);
+    app.emit('model:create', model);
+    app.emit('model:create:' + name, model);
   };
   options.save = function (model, cb) {
     app.hook('model:save').runSeries(model, function (err) {
