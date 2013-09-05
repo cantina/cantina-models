@@ -50,19 +50,25 @@ app.createCollection = function (name, options) {
   options.save = function (model, cb) {
     app.hook('model:save').runSeries(model, function (err) {
       if (err) return cb(err);
-      app.hook('model:save:' + name).runSeries(model, cb);
+      app.hook('model:save:' + name).runSeries(model, function (err) {
+        cb(err);
+      });
     });
   };
   options.load = function (model, cb) {
     app.hook('model:load').runSeries(model, function (err) {
       if (err) return cb(err);
-      app.hook('model:load:' + name).runSeries(model, cb);
+      app.hook('model:load:' + name).runSeries(model, function (err) {
+        cb(err);
+      });
     });
   };
   options.destroy = function (model, cb) {
     app.hook('model:destroy').runSeries(model, function (err) {
       if (err) return cb(err);
-      app.hook('model:destroy:' + name).runSeries(model, cb);
+      app.hook('model:destroy:' + name).runSeries(model, function (err) {
+        cb(err);
+      });
     });
   };
 
