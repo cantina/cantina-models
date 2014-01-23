@@ -43,34 +43,36 @@ app.createCollection = function (name, options) {
   }
 
   // Overridew with app-level CRUD hooks.
-  options.create = function (model) {
-    app.emit('model:create', model);
-    app.emit('model:create:' + name, model);
-  };
-  options.save = function (model, cb) {
-    app.hook('model:save').runSeries(model, function (err) {
-      if (err) return cb(err);
-      app.hook('model:save:' + name).runSeries(model, function (err) {
-        cb(err);
+  options = _.extend({}, options, {
+    create: function (model) {
+      app.emit('model:create', model);
+      app.emit('model:create:' + name, model);
+    },
+    save: function (model, cb) {
+      app.hook('model:save').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:save:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
       });
-    });
-  };
-  options.load = function (model, cb) {
-    app.hook('model:load').runSeries(model, function (err) {
-      if (err) return cb(err);
-      app.hook('model:load:' + name).runSeries(model, function (err) {
-        cb(err);
+    },
+    load: function (model, cb) {
+      app.hook('model:load').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:load:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
       });
-    });
-  };
-  options.destroy = function (model, cb) {
-    app.hook('model:destroy').runSeries(model, function (err) {
-      if (err) return cb(err);
-      app.hook('model:destroy:' + name).runSeries(model, function (err) {
-        cb(err);
+    },
+    destroy: function (model, cb) {
+      app.hook('model:destroy').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:destroy:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
       });
-    });
-  };
+    }
+  });
 
   // Allow override of modeler store; fall-back to app.modeler.
   app.collections[name] = (options.modeler || app.modeler)(options);
