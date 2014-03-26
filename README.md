@@ -97,7 +97,7 @@ app.boot(function (err) {
 
 ```js
 // When you create the collection, just pass your modeler store and options.
-app.createCollection({
+app.createCollection('your-collection-name', {
   // The modeler store to use.
   modeler: require('modeler-leveldb'),
 
