@@ -1,11 +1,18 @@
 var app = require('cantina')
+  , modeler = require('modeler')
   , _ = require('underscore');
 
 // Collections namespace.
 app.collections = {};
 
 // Create a new collection.
-app.createCollection = function (name, options) {
+app.createCollection = function (name, store, options) {
+  if (arguments.length < 3) {
+    options = store;
+    store = null;
+  }
+  // default modeler memory store
+  store = store || modeler;
   options = options || {};
 
   if (!name) {
@@ -64,6 +71,29 @@ app.createCollection = function (name, options) {
     }
   });
 
-  // Allow override of modeler store.
-  app.collections[name] = (options.modeler)(options);
+  app.collections[name] = (store)(options);
+};
+
+// Create a collection factory for a specific store.
+app.createCollectionFactory = function (factoryName, store, defaults) {
+  defaults = defaults || {};
+
+  if (!factoryName) {
+    throw new Error('A factory must have a name.');
+  }
+  if (!store || 'function' !== typeof store) {
+    throw new Error('A factory must have a store.');
+  }
+
+  // Normalize the factory name
+  factoryName = factoryName.toLowerCase().replace(/^./, function (char) { return char.toUpperCase(); });
+
+  if (app['create' + factoryName + 'Collection']) {
+    throw new Error('Factory ' + factoryName + ' has already been created.');
+  }
+
+  app['create' + factoryName + 'Collection'] = function (name, options) {
+    options = _.defaults(defaults, options || {});
+    return app.createCollection(name, store, options);
+  };
 };

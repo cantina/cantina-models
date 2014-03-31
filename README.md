@@ -1,15 +1,21 @@
 cantina-models
 ==============
 
-[Modeler](https://github.com/carlos8f/modeler)-powered models for Cantina applications.
+Models for Cantina applications.
 
 Provides
 --------
 
-- **app.collections** - A hash of modeler collections, keyed by collection 'name'.
-- **app.createCollection (name, options)** - Create a collection for use in the
-application. Accepts all the usual modeler options. By default it sets up
-modeler CRUD hooks that emit/run app-level events/hooks. (See more below).
+- **app.collections** - A hash of collections, keyed by collection 'name'.
+- **app.createCollection (name, store, options)** - Create a collection using
+the specified store for use in the application. The store must export a function
+that implements a [modeler](https://github.com/carlos8f/modeler)-compatible API.
+Options will be pased directly to the store, so if it's a modeler store, you can
+pass all the usual modeler options. By default it sets up modeler CRUD hooks
+that emit/run app-level events/hooks. (See more below). If you don't specify a
+store, collections will be created using a modeler memory-store.
+- **app.createCollectionFactory (factoryName, store, defaults)** - Create a
+store-specifc collection factory, optionally including default options.
 
 Events
 ------
@@ -65,8 +71,8 @@ app.boot(function (err) {
 
 **Redis**
 
-If you want to use other modeler stores, its easy. For example, to use
-[cantina-redis](https://github.com/cantina/cantina-redis) with
+Usually, you'll want to use an actual data store, not the memory store. For
+example, to use [cantina-redis](https://github.com/cantina/cantina-redis) with
 [modeler-redis](https://github.com/carlos8f/modeler-redis):
 
 ```js
@@ -78,32 +84,43 @@ app.boot(function (err) {
   require('cantina-redis');
   require('cantina-models');
 
-  // Use a different modeler store.
-  app.modeler = require('modeler-redis');
+  app.start(function (err) {
+    if (err) throw err;
+    // Use a redis modeler store.
+    var modeler = require('modeler-redis');
 
-  // Provide default options for new collections.
-  app.modelerOpts = {
-    client: app.redis,
-    prefix: app.redisKey('models') + ':'
-  };
+    // Pass options to modeler.
+    var options = {
+      client: app.redis,
+      prefix: app.redisKey('models') + ':'
+    };
 
-  // Ready to start persisting models to redis ...
+    // Ready to start persisting models to redis ...
+    app.createCollection('people', modeler, options);
+  });
 });
 ```
 
-**Custom store per-collection**
+**Store-Specifc Collection Factory**
 
-`cantina-models` supports specifying a custom modeler store per-collection.
+`cantina-models` supports defining store-specifc collection factories, optionally
+including default options.
 
 ```js
-// When you create the collection, just pass your modeler store and options.
-app.createCollection({
-  // The modeler store to use.
-  modeler: require('modeler-leveldb'),
-
+// When you create the Factory, pass the name, your store, and any default options.
+var modeler-leveldb = require('modeler-leveldb');
+app.createCollectionFactory('leveldb', modeler-leveldb, {
   // Pass options like usual.
   db: require('levelup')('/path/to/db')
 });
+// create the collection factory "app.createLeveldbCollection"
+
+// Then use it with simplified parameters for less repetition
+app.createLeveldbCollection('people');
+var petOptions = {
+  // each collection can still have collection-specific options
+};
+app.createLeveldbCollection('pets', petOptions);
 ```
 
 - - -
@@ -111,26 +128,3 @@ app.createCollection({
 ### Developed by [Terra Eclipse](http://www.terraeclipse.com)
 Terra Eclipse, Inc. is a nationally recognized political technology and
 strategy firm located in Aptos, CA and Washington, D.C.
-
-- - -
-
-### License: MIT
-Copyright (C) 2013 Terra Eclipse, Inc. ([http://www.terraeclipse.com](http://www.terraeclipse.com))
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the &quot;Software&quot;), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is furnished
-to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
