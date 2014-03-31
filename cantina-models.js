@@ -1,11 +1,6 @@
 var app = require('cantina')
   , _ = require('underscore');
 
-// Allow application to specify a different modeler store.
-if (!app.modeler) {
-  app.modeler = require('modeler');
-}
-
 // Collections namespace.
 app.collections = {};
 
@@ -18,11 +13,6 @@ app.createCollection = function (name, options) {
   }
   if (app.collections[name]) {
     throw new Error('Collection ' + name + ' has already been created.');
-  }
-
-  // Add store-specific options.
-  if (app.modelerOpts) {
-    _(options).extend(app.modelerOpts);
   }
 
   // Set name.
@@ -74,6 +64,6 @@ app.createCollection = function (name, options) {
     }
   });
 
-  // Allow override of modeler store; fall-back to app.modeler.
-  app.collections[name] = (options.modeler || app.modeler)(options);
+  // Allow override of modeler store.
+  app.collections[name] = (options.modeler)(options);
 };
