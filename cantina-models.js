@@ -1,18 +1,11 @@
 var app = require('cantina')
-  , modeler = require('modeler')
   , _ = require('underscore');
 
 // Collections namespace.
 app.collections = {};
 
 // Create a new collection.
-app.createCollection = function (name, store, options) {
-  if (arguments.length < 3) {
-    options = store;
-    store = null;
-  }
-  // default modeler memory store
-  store = store || modeler;
+function createCollection (name, store, options) {
   options = options || {};
 
   if (!name) {
@@ -72,7 +65,7 @@ app.createCollection = function (name, store, options) {
   });
 
   app.collections[name] = (store)(options);
-};
+}
 
 // Create a collection factory for a specific store.
 app.createCollectionFactory = function (factoryName, store, defaults) {
@@ -94,6 +87,6 @@ app.createCollectionFactory = function (factoryName, store, defaults) {
 
   app['create' + factoryName + 'Collection'] = function (name, options) {
     options = _.defaults(defaults, options || {});
-    return app.createCollection(name, store, options);
+    return createCollection(name, store, options);
   };
 };
