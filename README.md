@@ -7,15 +7,13 @@ Provides
 --------
 
 - **app.collections** - A hash of collections, keyed by collection 'name'.
-- **app.createCollection (name, store, options)** - Create a collection using
-the specified store for use in the application. The store must export a function
-that implements a [modeler](https://github.com/carlos8f/modeler)-compatible API.
-Options will be pased directly to the store, so if it's a modeler store, you can
-pass all the usual modeler options. By default it sets up modeler CRUD hooks
-that emit/run app-level events/hooks. (See more below). If you don't specify a
-store, collections will be created using a modeler memory-store.
 - **app.createCollectionFactory (factoryName, store, defaults)** - Create a
-store-specifc collection factory, optionally including default options.
+store-specifc collection factory, optionally including default options. A store
+must export a function that implements a
+[modeler](https://github.com/carlos8f/modeler)-compatible API. Options will be
+pased directly to the store, so if it's a modeler store, you can pass all the
+usual modeler options. By default it sets up modeler CRUD hooks that emit/run
+app-level events/hooks. (See more below).
 
 Events
 ------
@@ -36,42 +34,7 @@ Hooks
 Usage
 -----
 
-**Memory Store**
-
-Out of the box, collections will be created using a modeler memory-store.
-
-```js
-var app = require('cantina');
-
-app.boot(function (err) {
-  if (err) throw err;
-
-  // Load the module.
-  require('cantina-models');
-
-  app.start(function (err) {
-    if (err) throw err;
-
-    // We can now create collections.
-    app.createCollection('people');
-
-    // Bind to app events or hooks, for example:
-    app.hook('model:save:people', function (person, next) {
-      if (!person.first) return next(new Error('People must have a first name'));
-      next();
-    });
-
-    // Create a person.
-    app.collections.people.create({last: 'Doe'}, function (err, model) {
-      // We will get a 'validation' error here because of the hook.
-    });
-  });
-});
-```
-
-**Redis**
-
-Usually, you'll want to use an actual data store, not the memory store. For
+During app start-up, you'll need to create from collection factories. For
 example, to use [cantina-redis](https://github.com/cantina/cantina-redis) with
 [modeler-redis](https://github.com/carlos8f/modeler-redis):
 
@@ -86,41 +49,41 @@ app.boot(function (err) {
 
   app.start(function (err) {
     if (err) throw err;
+
     // Use a redis modeler store.
     var modeler = require('modeler-redis');
 
-    // Pass options to modeler.
+    // These default options will get passed to modeler.
     var options = {
       client: app.redis,
       prefix: app.redisKey('models') + ':'
     };
 
+    // We can now create collection factories.
+    app.createCollectionFactory('redis', modeler, options);
+    // Creates app.createRedisCollection
+
+    var peopleOptions = {
+      // each collection can still have collection-specific options
+    };
+
     // Ready to start persisting models to redis ...
-    app.createCollection('people', modeler, options);
+    app.createRedisCollection('people', peopleOptions);
+
+    // Bind to app events or hooks, for example:
+    app.hook('model:save:people', function (person, next) {
+      if (!person.first) return next(new Error('People must have a first name'));
+      next();
+    });
+
+    // Create a person.
+    app.collections.people.create({last: 'Doe'}, function (err, model) {
+      // We will get a 'validation' error here because of the hook.
+    });
+
   });
+
 });
-```
-
-**Store-Specifc Collection Factory**
-
-`cantina-models` supports defining store-specifc collection factories, optionally
-including default options.
-
-```js
-// When you create the Factory, pass the name, your store, and any default options.
-var modeler-leveldb = require('modeler-leveldb');
-app.createCollectionFactory('leveldb', modeler-leveldb, {
-  // Pass options like usual.
-  db: require('levelup')('/path/to/db')
-});
-// create the collection factory "app.createLeveldbCollection"
-
-// Then use it with simplified parameters for less repetition
-app.createLeveldbCollection('people');
-var petOptions = {
-  // each collection can still have collection-specific options
-};
-app.createLeveldbCollection('pets', petOptions);
 ```
 
 - - -
@@ -128,3 +91,5 @@ app.createLeveldbCollection('pets', petOptions);
 ### Developed by [Terra Eclipse](http://www.terraeclipse.com)
 Terra Eclipse, Inc. is a nationally recognized political technology and
 strategy firm located in Aptos, CA and Washington, D.C.
+
+Copyright (C) 2013-2014 Terra Eclipse, Inc. (http://www.terraeclipse.com)
