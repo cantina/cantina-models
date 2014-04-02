@@ -46,6 +46,14 @@ function createCollection (name, store, options) {
         });
       });
     },
+    afterSave: function (model, cb) {
+      app.hook('model:afterSave').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:afterSave:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
+      });
+    },
     load: function (model, cb) {
       app.hook('model:load').runSeries(model, function (err) {
         if (err) return cb(err);
@@ -58,6 +66,14 @@ function createCollection (name, store, options) {
       app.hook('model:destroy').runSeries(model, function (err) {
         if (err) return cb(err);
         app.hook('model:destroy:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
+      });
+    },
+    afterDestroy: function (model, cb) {
+      app.hook('model:afterDestroy').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:afterDestroy:' + name).runSeries(model, function (err) {
           cb(err);
         });
       });

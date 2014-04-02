@@ -26,10 +26,14 @@ Hooks
 
 - **model:save (model, cb)** - A model is about to be saved.
 - **model:save:_name_ (model, cb)** - A model of type _name_ is about to be saved.
+- **model:afterSave (model, cb)** - A model was successfully saved.
+- **model:afterSave:_name_ (model, cb)** - A model of type _name_ was successfully saved.
 - **model:load (model, cb)** - A model was loaded.
 - **model:load:_name_ (model, cb)** - A model of type _name_ was loaded.
-- **model:destroy (model, cb)** - A model was destroyed.
-- **model:destroy:_name_ (model, cb)** - A model of type _name_ was destroyed.
+- **model:destroy (model, cb)** - A model is about to be destroyed.
+- **model:destroy:_name_ (model, cb)** - A model of type _name_ is about to be destroyed.
+- **model:afterDestroy (model, cb)** - A model was successfully destroyed.
+- **model:afterDestroy:_name_ (model, cb)** - A model of type _name_ was successfully destroyed.
 
 Usage
 -----
