@@ -97,4 +97,38 @@ describe('basic test', function () {
       done();
     });
   });
+
+  it('runs `model:afterDestroy` hook', function (done) {
+    var afterDestroyHookRan = false;
+    app.hook('model:afterDestroy').add(function onHook (model, next) {
+      app.hook('model:afterDestroy').remove(onHook);
+      afterDestroyHookRan = true;
+      next();
+    });
+    app.collections.people.create({first: 'Danny'}, function (err, model) {
+      assert.ifError(err);
+      app.collections.people.destroy(model, function (err) {
+        assert.ifError(err);
+        assert(afterDestroyHookRan);
+      });
+      done();
+    });
+  });
+
+  it('runs `model:afterDestroy:[name]` hook', function (done) {
+    var afterDestroyHookRan = false;
+    app.hook('model:afterDestroy:people').add(function onHook (model, next) {
+      app.hook('model:afterDestroy:people').remove(onHook);
+      afterDestroyHookRan = true;
+      next();
+    });
+    app.collections.people.create({first: 'Danny'}, function (err, model) {
+      assert.ifError(err);
+      app.collections.people.destroy(model, function (err) {
+        assert.ifError(err);
+        assert(afterDestroyHookRan);
+      });
+      done();
+    });
+  });
 });
