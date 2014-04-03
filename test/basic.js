@@ -16,8 +16,23 @@ describe('basic test', function () {
     app.destroy(done);
   });
 
+  it('can create store-specific collection factory', function () {
+    var modeler = require('modeler');
+    app.createCollectionFactory('memory', modeler);
+    assert(app.createMemoryCollection);
+    assert('function' === typeof app.createMemoryCollection);
+  });
+
+  it('throws if you try to create the same factory more than once', function () {
+    assert.throws(function () {
+      var modeler = require('modeler');
+      app.createCollectionFactory('memory', modeler);
+    },
+    /Factory Memory has already been created./);
+  });
+
   it('can create a collection', function (done) {
-    app.createCollection('people');
+    app.createMemoryCollection('people');
     app.collections.people.create({
       first: 'Brian',
       last: 'Link',
@@ -79,6 +94,40 @@ describe('basic test', function () {
       assert.ifError(err);
       assert.equal(model.first, 'Danny');
       assert(model.saveHookRan);
+      done();
+    });
+  });
+
+  it('runs `model:afterDestroy` hook', function (done) {
+    var afterDestroyHookRan = false;
+    app.hook('model:afterDestroy').add(function onHook (model, next) {
+      app.hook('model:afterDestroy').remove(onHook);
+      afterDestroyHookRan = true;
+      next();
+    });
+    app.collections.people.create({first: 'Danny'}, function (err, model) {
+      assert.ifError(err);
+      app.collections.people.destroy(model, function (err) {
+        assert.ifError(err);
+        assert(afterDestroyHookRan);
+      });
+      done();
+    });
+  });
+
+  it('runs `model:afterDestroy:[name]` hook', function (done) {
+    var afterDestroyHookRan = false;
+    app.hook('model:afterDestroy:people').add(function onHook (model, next) {
+      app.hook('model:afterDestroy:people').remove(onHook);
+      afterDestroyHookRan = true;
+      next();
+    });
+    app.collections.people.create({first: 'Danny'}, function (err, model) {
+      assert.ifError(err);
+      app.collections.people.destroy(model, function (err) {
+        assert.ifError(err);
+        assert(afterDestroyHookRan);
+      });
       done();
     });
   });

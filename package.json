@@ -1,15 +1,15 @@
 {
   "name": "cantina-models",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "private": true,
   "description": "Extensible models for cantina applications.",
   "main": "cantina-models.js",
   "dependencies": {
-    "modeler": "~0.4.3",
     "underscore": "~1.5.1"
   },
   "devDependencies": {
     "mocha": "*",
+    "modeler": "~0.4.7",
     "modeler-redis": "~0.3.1",
     "cantina": "cantina/cantina#3.x",
     "cantina-redis": "cantina/cantina-redis#3.x"

@@ -1,16 +1,11 @@
 var app = require('cantina')
   , _ = require('underscore');
 
-// Allow application to specify a different modeler store.
-if (!app.modeler) {
-  app.modeler = require('modeler');
-}
-
 // Collections namespace.
 app.collections = {};
 
 // Create a new collection.
-app.createCollection = function (name, options) {
+function createCollection (name, store, options) {
   options = options || {};
 
   if (!name) {
@@ -18,11 +13,6 @@ app.createCollection = function (name, options) {
   }
   if (app.collections[name]) {
     throw new Error('Collection ' + name + ' has already been created.');
-  }
-
-  // Add store-specific options.
-  if (app.modelerOpts) {
-    _(options).extend(app.modelerOpts);
   }
 
   // Set name.
@@ -56,6 +46,14 @@ app.createCollection = function (name, options) {
         });
       });
     },
+    afterSave: function (model, cb) {
+      app.hook('model:afterSave').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:afterSave:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
+      });
+    },
     load: function (model, cb) {
       app.hook('model:load').runSeries(model, function (err) {
         if (err) return cb(err);
@@ -71,9 +69,40 @@ app.createCollection = function (name, options) {
           cb(err);
         });
       });
+    },
+    afterDestroy: function (model, cb) {
+      app.hook('model:afterDestroy').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:afterDestroy:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
+      });
     }
   });
 
-  // Allow override of modeler store; fall-back to app.modeler.
-  app.collections[name] = (options.modeler || app.modeler)(options);
+  app.collections[name] = (store)(options);
+}
+
+// Create a collection factory for a specific store.
+app.createCollectionFactory = function (factoryName, store, defaults) {
+  defaults = defaults || {};
+
+  if (!factoryName) {
+    throw new Error('A factory must have a name.');
+  }
+  if (!store || 'function' !== typeof store) {
+    throw new Error('A factory must have a store.');
+  }
+
+  // Normalize the factory name
+  factoryName = factoryName.toLowerCase().replace(/^./, function (char) { return char.toUpperCase(); });
+
+  if (app['create' + factoryName + 'Collection']) {
+    throw new Error('Factory ' + factoryName + ' has already been created.');
+  }
+
+  app['create' + factoryName + 'Collection'] = function (name, options) {
+    options = _.defaults(defaults, options || {});
+    return createCollection(name, store, options);
+  };
 };

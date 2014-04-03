@@ -10,13 +10,15 @@ describe('redis test', function () {
       require('cantina-redis');
       require('../');
 
-      app.modeler = require('modeler-redis');
-      app.modelerOpts = {
-        client: app.redis,
-        prefix: app.redisKey('models') + ':'
-      };
-
-      app.start(done);
+      app.start(function (err) {
+        assert.ifError(err);
+        var modeler = require('modeler-redis');
+        app.createCollectionFactory('redis', modeler, {
+          client: app.redis,
+          prefix: app.redisKey('models') + ':'
+        });
+        done();
+      });
     });
   });
 
@@ -31,7 +33,7 @@ describe('redis test', function () {
   });
 
   it('can create a collection', function (done) {
-    app.createCollection('people');
+    app.createRedisCollection('people');
     app.collections.people.create({
       first: 'Brian',
       last: 'Link',
