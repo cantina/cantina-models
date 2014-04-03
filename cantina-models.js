@@ -81,6 +81,8 @@ function createCollection (name, store, options) {
   });
 
   app.collections[name] = (store)(options);
+  app.emit('collection:create', app.collections[name]);
+  app.emit('collection:create:' + name, app.collections[name]);
 }
 
 // Create a collection factory for a specific store.
