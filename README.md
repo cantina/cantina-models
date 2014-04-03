@@ -18,6 +18,8 @@ app-level events/hooks. (See more below).
 Events
 ------
 
+- **collection:create (collection)** - A collection was created.
+- **collection:create:_name_ (collection)** - A collection of type _name_ was created.
 - **model:create (model)** - A model was created.
 - **model:create:_name_ (model)** - A model of type _name_ was created.
 
