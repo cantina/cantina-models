@@ -25,11 +25,17 @@ function createCollection (name, store, options) {
   if (options.save) {
     app.hook('model:save:' + name).add(options.save);
   }
+  if (options.afterSave) {
+    app.hook('model:afterSave:' + name).add(options.afterSave);
+  }
   if (options.load) {
     app.hook('model:load:' + name).add(options.load);
   }
   if (options.destroy) {
     app.hook('model:destroy:' + name).add(options.destroy);
+  }
+  if (options.afterDestroy) {
+    app.hook('model:afterDestroy:' + name).add(options.afterDestroy);
   }
 
   // Overridew with app-level CRUD hooks.
