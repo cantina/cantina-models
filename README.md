@@ -8,18 +8,30 @@ Provides
 
 - **app.collections** - A hash of collections, keyed by collection 'name'.
 - **app.createCollectionFactory (factoryName, store, defaults)** - Create a
-store-specifc collection factory, optionally including default options. A store
-must export a function that implements a
-[modeler](https://github.com/carlos8f/modeler)-compatible API. Options will be
-pased directly to the store, so if it's a modeler store, you can pass all the
-usual modeler options. By default it sets up modeler CRUD hooks that emit/run
-app-level events/hooks. (See more below).
+store-specifc collection factory, optionally including default options.
+  - **factoryName** - used to name the factory, e.g., the factoryName "redis"
+(case-insensitive) will create `app.createRedisCollection`
+  - **store** - a function that implements a
+[modeler](https://github.com/carlos8f/modeler)-compatible API.
+  - **defaults** - default options to be passed to the store
+
+Factory
+-------
+- **app.create[Factoryname]Collection (name, options)** - Create a
+collection for use in your application.
+  - **name** - used to name the collection, e.g., the name "userComments" will
+create `app.collections.userComments`
+  - **options** - passed directly to the store. So, if it's a modeler store, you
+can pass all the usual modeler options. Other stores may implement additional
+options. By default it sets up modeler CRUD hooks that emit/run app-level
+events/hooks, as well as an `init` event that is triggered once on
+`collection:init`. (See more below).
 
 Events
 ------
 
-- **collection:create (collection)** - A collection was created.
-- **collection:create:_name_ (collection)** - A collection of type _name_ was created.
+- **collection:init (collection)** - A collection was created.
+- **collection:init:_name_ (collection)** - A collection of type _name_ was created.
 - **model:create (model)** - A model was created.
 - **model:create:_name_ (model)** - A model of type _name_ was created.
 
