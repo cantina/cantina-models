@@ -53,8 +53,8 @@ describe('basic test', function () {
 
   describe('hooks', function () {
 
-    it('emits `collection:create` event', function (done) {
-      app.once('collection:create', function (collection) {
+    it('emits `collection:init` event', function (done) {
+      app.once('collection:init', function (collection) {
         assert.equal(collection.options.name, 'players');
         assert.equal(app.collections.players, collection);
         done();
@@ -62,8 +62,8 @@ describe('basic test', function () {
       app.createMemoryCollection('players');
     });
 
-    it('emits `collection:create:[name]` event', function (done) {
-      app.once('collection:create:coaches', function (collection) {
+    it('emits `collection:init:[name]` event', function (done) {
+      app.once('collection:init:coaches', function (collection) {
         assert.equal(collection.options.name, 'coaches');
         assert.equal(app.collections.coaches, collection);
         done();

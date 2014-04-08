@@ -20,7 +20,7 @@ function createCollection (name, store, options) {
 
   // Setup passed collection init hook
   if (options.init) {
-    app.once('collection:create:' + name, options.init);
+    app.once('collection:init:' + name, options.init);
   }
 
   // Save passed CRUD hooks.
@@ -92,8 +92,8 @@ function createCollection (name, store, options) {
   });
 
   app.collections[name] = (store)(options);
-  app.emit('collection:create', app.collections[name]);
-  app.emit('collection:create:' + name, app.collections[name]);
+  app.emit('collection:init', app.collections[name]);
+  app.emit('collection:init:' + name, app.collections[name]);
   return app.collections[name];
 }
 
