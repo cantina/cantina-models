@@ -18,6 +18,11 @@ function createCollection (name, store, options) {
   // Set name.
   options.name = name;
 
+  // Setup passed collection init hook
+  if (options.init) {
+    app.once('collection:create:' + name, options.init);
+  }
+
   // Save passed CRUD hooks.
   if (options.create) {
     app.on('model:create:' + name, options.create);

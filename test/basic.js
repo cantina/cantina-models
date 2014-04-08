@@ -71,6 +71,17 @@ describe('basic test', function () {
       app.createMemoryCollection('coaches');
     });
 
+    it('runs passed collection init hook', function (done) {
+      function onInit (collection) {
+        assert.equal(collection.options.name, 'breads');
+        assert.equal(app.collections.breads, collection);
+        done();
+      }
+      app.createMemoryCollection('breads', {
+        init: onInit
+      });
+    });
+
     it('emits `model:create` event', function (done) {
       app.on('model:create', function onModelCreate (model) {
         app.removeListener('model:create', onModelCreate);
