@@ -11,7 +11,7 @@ function createCollection (name, store, options) {
   if (!name) {
     throw new Error('A collection must have a name.');
   }
-  if (app.collections[name]) {
+  if (Object.keys(app.collections).some(function (collection) { return collection.toLowerCase() === name.toLowerCase(); })) {
     throw new Error('Collection ' + name + ' has already been created.');
   }
 
