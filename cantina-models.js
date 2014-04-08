@@ -11,12 +11,17 @@ function createCollection (name, store, options) {
   if (!name) {
     throw new Error('A collection must have a name.');
   }
-  if (app.collections[name]) {
+  if (Object.keys(app.collections).some(function (collection) { return collection.toLowerCase() === name.toLowerCase(); })) {
     throw new Error('Collection ' + name + ' has already been created.');
   }
 
   // Set name.
   options.name = name;
+
+  // Setup passed collection init hook
+  if (options.init) {
+    app.once('collection:init:' + name, options.init);
+  }
 
   // Save passed CRUD hooks.
   if (options.create) {
@@ -87,8 +92,8 @@ function createCollection (name, store, options) {
   });
 
   app.collections[name] = (store)(options);
-  app.emit('collection:create', app.collections[name]);
-  app.emit('collection:create:' + name, app.collections[name]);
+  app.emit('collection:init', app.collections[name]);
+  app.emit('collection:init:' + name, app.collections[name]);
   return app.collections[name];
 }
 
