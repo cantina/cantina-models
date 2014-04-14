@@ -1,32 +1,27 @@
 var app = require('cantina')
   , _ = require('underscore');
 
-// Allow application to specify a different modeler store.
-if (!app.modeler) {
-  app.modeler = require('modeler');
-}
-
 // Collections namespace.
 app.collections = {};
 
 // Create a new collection.
-app.createCollection = function (name, options) {
+function createCollection (name, store, options) {
   options = options || {};
 
   if (!name) {
     throw new Error('A collection must have a name.');
   }
-  if (app.collections[name]) {
+  if (Object.keys(app.collections).some(function (collection) { return collection.toLowerCase() === name.toLowerCase(); })) {
     throw new Error('Collection ' + name + ' has already been created.');
-  }
-
-  // Add store-specific options.
-  if (app.modelerOpts) {
-    _(options).extend(app.modelerOpts);
   }
 
   // Set name.
   options.name = name;
+
+  // Setup passed collection init hook
+  if (options.init) {
+    app.once('collection:init:' + name, options.init);
+  }
 
   // Save passed CRUD hooks.
   if (options.create) {
@@ -35,11 +30,17 @@ app.createCollection = function (name, options) {
   if (options.save) {
     app.hook('model:save:' + name).add(options.save);
   }
+  if (options.afterSave) {
+    app.hook('model:afterSave:' + name).add(options.afterSave);
+  }
   if (options.load) {
     app.hook('model:load:' + name).add(options.load);
   }
   if (options.destroy) {
     app.hook('model:destroy:' + name).add(options.destroy);
+  }
+  if (options.afterDestroy) {
+    app.hook('model:afterDestroy:' + name).add(options.afterDestroy);
   }
 
   // Overridew with app-level CRUD hooks.
@@ -52,6 +53,14 @@ app.createCollection = function (name, options) {
       app.hook('model:save').runSeries(model, function (err) {
         if (err) return cb(err);
         app.hook('model:save:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
+      });
+    },
+    afterSave: function (model, cb) {
+      app.hook('model:afterSave').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:afterSave:' + name).runSeries(model, function (err) {
           cb(err);
         });
       });
@@ -71,9 +80,43 @@ app.createCollection = function (name, options) {
           cb(err);
         });
       });
+    },
+    afterDestroy: function (model, cb) {
+      app.hook('model:afterDestroy').runSeries(model, function (err) {
+        if (err) return cb(err);
+        app.hook('model:afterDestroy:' + name).runSeries(model, function (err) {
+          cb(err);
+        });
+      });
     }
   });
 
-  // Allow override of modeler store; fall-back to app.modeler.
-  app.collections[name] = (options.modeler || app.modeler)(options);
+  app.collections[name] = (store)(options);
+  app.emit('collection:init', app.collections[name]);
+  app.emit('collection:init:' + name, app.collections[name]);
+  return app.collections[name];
+}
+
+// Create a collection factory for a specific store.
+app.createCollectionFactory = function (factoryName, store, defaults) {
+  defaults = defaults || {};
+
+  if (!factoryName) {
+    throw new Error('A factory must have a name.');
+  }
+  if (!store || 'function' !== typeof store) {
+    throw new Error('A factory must have a store.');
+  }
+
+  // Normalize the factory name
+  factoryName = factoryName.toLowerCase().replace(/^./, function (char) { return char.toUpperCase(); });
+
+  if (app['create' + factoryName + 'Collection']) {
+    throw new Error('Factory ' + factoryName + ' has already been created.');
+  }
+
+  app['create' + factoryName + 'Collection'] = function (name, options) {
+    options = _.defaults(_.clone(defaults), options || {});
+    return createCollection(name, store, options);
+  };
 };
