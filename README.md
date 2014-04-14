@@ -52,7 +52,7 @@ Hooks
 Usage
 -----
 
-During app start-up, you'll need to create from collection factories. For
+During app start-up, you'll need to create some collection factories. For
 example, to use [cantina-redis](https://github.com/cantina/cantina-redis) with
 [modeler-redis](https://github.com/carlos8f/modeler-redis):
 
