@@ -27,6 +27,58 @@ options. By default it sets up modeler CRUD hooks that emit/run app-level
 events/hooks, as well as an `init` event that is triggered once on
 `collection:init`. (See more below).
 
+### Factory CRUD methods
+
+Every collection created by the factory will implement the following modeler-compatible CRUD methods:
+
+#### `create (attributes, [callback])`
+
+Creates a model using the provided `attributes`. If not provided, ensures that
+`id`, `rev`, and `created` are defined.
+
+The created model is returned unless a `callback` is provided. If a `callback` is
+provided, the model will be saved and the `callback` invoked with the results of
+the save.
+
+#### `load (id, [options], [callback])`
+
+Loads a model by `id`. Any `options` are passed to the store.
+
+#### `save (model, [options], [callback])`
+
+Saves `model`. Any `options` are passed to the store.
+
+#### `destroy (id|model, [options], [callback])`
+
+Destroys (deletes) `model` (or the model identified by `id`). Any `options` are
+passed to the store.
+
+#### `list ([options], callback)`
+
+Lists all models in the collection. Any `options` (e.g., offset, limit) are
+passed to the store.
+
+### Model properties
+
+Every model will have the following properties, at a minimum:
+
+#### `id`
+
+The model's unique identifier.
+
+#### `rev`
+
+The model's revision number (incremented on each save).
+
+#### `created`
+
+The `Date.now()` when the model was created.
+
+#### `updated`
+
+If the model has been saved, the `Date.now()` when the model was most recently
+saved.
+
 Events
 ------
 
