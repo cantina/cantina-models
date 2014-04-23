@@ -117,6 +117,8 @@ app.createCollectionFactory = function (factoryName, store, defaults) {
 
   app['create' + factoryName + 'Collection'] = function (name, options) {
     options = _.defaults(_.clone(defaults), options || {});
-    return createCollection(name, store, options);
+    var collection = createCollection(name, store, options);
+    collection.__type = factoryName.toLowerCase();
+    return collection;
   };
 };

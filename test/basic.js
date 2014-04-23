@@ -37,6 +37,7 @@ describe('basic test', function () {
       var collection = app.createMemoryCollection('people');
       assert(app.collections.people);
       assert.strictEqual(collection, app.collections.people);
+      assert.strictEqual(app.collections.people.__type, 'memory');
       app.collections.people.create({
         first: 'Brian',
         last: 'Link',
