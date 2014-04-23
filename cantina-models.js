@@ -5,7 +5,7 @@ var app = require('cantina')
 app.collections = {};
 
 // Create a new collection.
-function createCollection (name, store, options) {
+function createCollection (type, name, store, options) {
   options = options || {};
 
   if (!name) {
@@ -92,6 +92,7 @@ function createCollection (name, store, options) {
   });
 
   app.collections[name] = (store)(options);
+  app.collections[name].__type = type;
   app.emit('collection:init', app.collections[name]);
   app.emit('collection:init:' + name, app.collections[name]);
   return app.collections[name];
@@ -117,8 +118,6 @@ app.createCollectionFactory = function (factoryName, store, defaults) {
 
   app['create' + factoryName + 'Collection'] = function (name, options) {
     options = _.defaults(_.clone(defaults), options || {});
-    var collection = createCollection(name, store, options);
-    collection.__type = factoryName.toLowerCase();
-    return collection;
+    return createCollection(factoryName.toLowerCase(), name, store, options);
   };
 };
