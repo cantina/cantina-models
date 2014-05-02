@@ -93,8 +93,10 @@ function createCollection (type, name, store, options) {
 
   app.collections[name] = (store)(options);
   app.collections[name].__type = type;
-  app.emit('collection:init', app.collections[name]);
-  app.emit('collection:init:' + name, app.collections[name]);
+  process.nextTick(function () {
+    app.emit('collection:init', app.collections[name]);
+    app.emit('collection:init:' + name, app.collections[name]);
+  });
   return app.collections[name];
 }
 
