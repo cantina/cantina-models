@@ -1,18 +1,23 @@
 {
   "name": "cantina-models",
-  "version": "3.1.4",
-  "private": true,
+  "version": "4.0.0-dev",
+  "publishConfig": {
+    "registry": "https://npm-registry.terraeclipse.com"
+  },
   "description": "Extensible models for cantina applications.",
   "main": "cantina-models.js",
   "dependencies": {
-    "underscore": "~1.5.1"
+    "underscore": "~1.6.0"
+  },
+  "peerDependencies": {
+    "cantina": "~4.0.0"
   },
   "devDependencies": {
     "mocha": "*",
     "modeler": "~0.4.7",
     "modeler-redis": "~0.3.1",
-    "cantina": "cantina/cantina#3.x",
-    "cantina-redis": "cantina/cantina-redis#3.x"
+    "cantina": "~4.0.0",
+    "cantina-redis": "~4.0.0"
   },
   "scripts": {
     "test": "make test"
@@ -26,6 +31,5 @@
     "cantina",
     "models"
   ],
-  "author": "Brian Link <cpsubrian@gmail.com>",
-  "license": "MIT"
+  "author": "Brian Link <cpsubrian@gmail.com>"
 }

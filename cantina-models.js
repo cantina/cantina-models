@@ -4,6 +4,11 @@ var app = require('cantina')
 // Collections namespace.
 app.collections = {};
 
+// Register a loader for collections.
+app.loader('collections', function (options) {
+  return app.load('modules', options);
+});
+
 // Create a new collection.
 function createCollection (type, name, store, options) {
   options = options || {};
