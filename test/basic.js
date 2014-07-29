@@ -2,12 +2,10 @@ describe('basic test', function () {
   var app;
 
   before(function (done) {
-    app = require('cantina');
+    app = require('cantina').createApp();
     app.boot(function (err) {
       assert.ifError(err);
-
-      require('../');
-
+      app.require('../');
       app.start(done);
     });
   });

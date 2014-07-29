@@ -2,14 +2,12 @@ describe('redis test', function () {
   var app, id;
 
   before(function (done) {
-    app = require('cantina');
+    app = require('cantina').createApp();
     app.boot(function (err) {
       assert.ifError(err);
-
       app.conf.set('redis:prefix', 'cantina-test-' + Date.now());
-      require('cantina-redis');
-      require('../');
-
+      app.require('cantina-redis');
+      app.require('../');
       app.start(function (err) {
         assert.ifError(err);
         var modeler = require('modeler-redis');
