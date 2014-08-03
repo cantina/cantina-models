@@ -1,6 +1,6 @@
 {
   "name": "cantina-models",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Extensible models for cantina applications.",
   "main": "cantina-models.js",
   "dependencies": {
