@@ -1,9 +1,6 @@
 {
   "name": "cantina-models",
   "version": "4.1.0",
-  "publishConfig": {
-    "registry": "https://npm-registry.terraeclipse.com"
-  },
   "description": "Extensible models for cantina applications.",
   "main": "cantina-models.js",
   "dependencies": {
@@ -26,6 +23,12 @@
     "type": "git",
     "url": "git://github.com/cpsubrian/cantina-models.git"
   },
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  ],
   "homepage": "https://github.com/cpsubrian/cantina-models",
   "keywords": [
     "cantina",

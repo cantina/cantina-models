@@ -109,13 +109,13 @@ example, to use [cantina-redis](https://github.com/cantina/cantina-redis) with
 [modeler-redis](https://github.com/carlos8f/modeler-redis):
 
 ```js
-var app = require('cantina');
+var app = require('cantina').createApp();
 
 app.boot(function (err) {
   if (err) throw err;
 
-  require('cantina-redis');
-  require('cantina-models');
+  app.require('cantina-redis');
+  app.require('cantina-models');
 
   app.start(function (err) {
     if (err) throw err;
@@ -161,5 +161,3 @@ app.boot(function (err) {
 ### Developed by [Terra Eclipse](http://www.terraeclipse.com)
 Terra Eclipse, Inc. is a nationally recognized political technology and
 strategy firm located in Santa Cruz, CA and Washington, D.C.
-
-Copyright (C) 2013-2014 Terra Eclipse, Inc. (http://www.terraeclipse.com)
