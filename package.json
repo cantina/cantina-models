@@ -7,14 +7,14 @@
     "underscore": "~1.6.0"
   },
   "peerDependencies": {
-    "cantina": "~4.1.0"
+    "cantina": "^4.1.0"
   },
   "devDependencies": {
     "mocha": "*",
     "modeler": "~0.4.7",
     "modeler-redis": "~0.3.1",
-    "cantina": "~4.1.0",
-    "cantina-redis": "~4.1.0"
+    "cantina": "^4.1.0",
+    "cantina-redis": "^4.1.0"
   },
   "scripts": {
     "test": "make test"
