@@ -21,7 +21,7 @@ module.exports = function (app) {
     }
 
     // Set name.
-    options.name = name;
+    options.name = options.name || name;
 
     // Setup passed collection init hook
     if (options.init) {
